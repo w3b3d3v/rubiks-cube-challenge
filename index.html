@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>7x7x7 Rubik's Cube - Twizzle Edition</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>🎲 7x7x7 Rubik's Cube Simulator</h1>
+        <p class="subtitle">Powered by Twizzle - The Ultimate Cube Library</p>
+      </header>
+
+      <div id="controls">
+        <div class="control-group">
+          <button id="scrambleBtn" class="btn primary">🔀 Scramble</button>
+          <button id="solveBtn" class="btn secondary">✨ Solve</button>
+        </div>
+
+        <div class="info">
+          <p><strong>Controls:</strong></p>
+          <ul>
+            <li>🖱️ Click & drag to rotate view</li>
+            <li>🎲 <strong>Scramble:</strong> Generate random cube state</li>
+            <li>✨ <strong>Solve:</strong> Return to solved state</li>
+          </ul>
+          <p><strong>Note:</strong> Using 7x7x7 (max supported by Twizzle)</p>
+        </div>
+      </div>
+
+      <div id="cube-container">
+        <twisty-player
+          id="cubePlayer"
+          puzzle="12x12x12"
+          alg=""
+          hint-facelets="none"
+          control-panel="none"
+          background="none"
+          visualization="3D"
+        >
+        </twisty-player>
+      </div>
+
+      <div id="status">
+        <p id="moveCounter">Moves: 0</p>
+        <p id="currentAlg">Current Algorithm: None</p>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
