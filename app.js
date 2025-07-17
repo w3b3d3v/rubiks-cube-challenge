@@ -7,8 +7,33 @@ class RubiksCubeApp {
     this.currentAlgorithm = "";
     this.isAnimating = false;
 
-    // Define available moves for megaminx (dodecahedron - 12 faces)
-    this.scrambleMoves = [
+    // Current puzzle type: "3x3x3" (Rubik's Cube) or "megaminx" (12x12 Dodecahedron)
+    this.puzzleType = "3x3x3"; // default principal puzzle
+
+    // Scramble move sets for both puzzles
+    this.scrambleMovesCube = [
+      "R",
+      "R'",
+      "R2",
+      "U",
+      "U'",
+      "U2",
+      "F",
+      "F'",
+      "F2",
+      "L",
+      "L'",
+      "L2",
+      "B",
+      "B'",
+      "B2",
+      "D",
+      "D'",
+      "D2",
+    ];
+
+    // Moves for megaminx (dodecahedron)
+    this.scrambleMovesMegaminx = [
       // Primary face turns
       "R",
       "R'",
@@ -49,11 +74,18 @@ class RubiksCubeApp {
       "z2", // Z-axis rotation
     ];
 
+    // Start with cube moves
+    this.scrambleMoves = this.scrambleMovesCube;
+
     this.init();
   }
 
   async init() {
-    console.log("🎲 Initializing 12x12 Dodecahedron with Twizzle...");
+    console.log(
+      `🎲 Initializing ${
+        this.puzzleType === "3x3x3" ? "3x3 Rubik's Cube" : "12x12 Dodecahedron"
+      } with Twizzle...`
+    );
 
     try {
       await this.initializeCube();
@@ -69,17 +101,20 @@ class RubiksCubeApp {
   async initializeCube() {
     const container = document.getElementById("cube-container");
 
-    // Show loading
+    const loadingText =
+      this.puzzleType === "3x3x3"
+        ? "Loading 3x3 Cube..."
+        : "Loading 12x12 Dodecahedron...";
     container.innerHTML = `
             <div class="loading">
                 <div class="spinner"></div>
-                <p>Loading 12x12 Dodecahedron...</p>
+                <p>${loadingText}</p>
             </div>
         `;
 
     // Create the Twisty player - using megaminx (dodecahedron-based)
     this.player = new TwistyPlayer({
-      puzzle: "megaminx",
+      puzzle: this.puzzleType,
       alg: "",
       hintFacelets: "none",
       controlPanel: "none",
@@ -117,6 +152,20 @@ class RubiksCubeApp {
     // Replace loading with the cube
     container.innerHTML = "";
     container.appendChild(this.player);
+
+    // Update heading text and switch button label based on puzzle
+    const heading = document.getElementById("mainHeading");
+    if (heading) {
+      heading.textContent =
+        this.puzzleType === "3x3x3"
+          ? "🎲 3x3 Rubik's Cube Simulator"
+          : "🌟 12x12 Dodecahedron Simulator";
+    }
+    const switchBtn = document.getElementById("switchPuzzleBtn");
+    if (switchBtn) {
+      switchBtn.textContent =
+        this.puzzleType === "3x3x3" ? "Switch to 12x12" : "Switch to 3x3";
+    }
   }
 
   setupEventListeners() {
@@ -129,6 +178,14 @@ class RubiksCubeApp {
     document.getElementById("solveBtn").addEventListener("click", () => {
       this.solveCube();
     });
+
+    // Switch puzzle button
+    const switchBtn = document.getElementById("switchPuzzleBtn");
+    if (switchBtn) {
+      switchBtn.addEventListener("click", () => {
+        this.switchPuzzle();
+      });
+    }
 
     // Update move counter when algorithm changes
     if (this.player) {
@@ -147,8 +204,8 @@ class RubiksCubeApp {
       this.isAnimating = true;
       this.updateButtonStates(true);
 
-      // Generate a proper megaminx scramble (70 moves for dodecahedron)
-      const scramble = this.generateRandomScramble(70);
+      const numMoves = this.puzzleType === "3x3x3" ? 20 : 70; // typical lengths
+      const scramble = this.generateRandomScramble(numMoves);
 
       this.currentAlgorithm = scramble;
       this.moveCount = this.countMoves(this.currentAlgorithm);
@@ -160,7 +217,7 @@ class RubiksCubeApp {
 
       // Create a new player with the scramble
       const newPlayer = new TwistyPlayer({
-        puzzle: "megaminx",
+        puzzle: this.puzzleType,
         alg: scramble,
         hintFacelets: "none",
         controlPanel: "none",
@@ -234,7 +291,7 @@ class RubiksCubeApp {
       const container = document.getElementById("cube-container");
 
       const newPlayer = new TwistyPlayer({
-        puzzle: "megaminx",
+        puzzle: this.puzzleType,
         alg: "",
         hintFacelets: "none",
         controlPanel: "none",
@@ -267,16 +324,19 @@ class RubiksCubeApp {
     const moves = [];
     let lastMove = "";
 
+    // Choose appropriate move set based on current puzzle
+    const moveSet =
+      this.puzzleType === "3x3x3"
+        ? this.scrambleMovesCube
+        : this.scrambleMovesMegaminx;
+
     for (let i = 0; i < numMoves; i++) {
       let move;
       let faceId;
       let attempts = 0;
 
       do {
-        move =
-          this.scrambleMoves[
-            Math.floor(Math.random() * this.scrambleMoves.length)
-          ];
+        move = moveSet[Math.floor(Math.random() * moveSet.length)];
         // For dodecahedron, face identification is more complex
         faceId = move.replace(/['2]/g, ""); // Remove ', 2 to get face name
         attempts++;
@@ -353,6 +413,23 @@ class RubiksCubeApp {
     setTimeout(() => {
       this.scrambleCube();
     }, 1500);
+  }
+
+  // Switch between cube and megaminx puzzles
+  switchPuzzle() {
+    if (this.isAnimating) return;
+
+    // Toggle puzzle type
+    this.puzzleType = this.puzzleType === "3x3x3" ? "megaminx" : "3x3x3";
+
+    // Update scramble move reference
+    this.scrambleMoves =
+      this.puzzleType === "3x3x3"
+        ? this.scrambleMovesCube
+        : this.scrambleMovesMegaminx;
+
+    // Re-initialize the cube with new puzzle type
+    this.initializeCube();
   }
 }
 
