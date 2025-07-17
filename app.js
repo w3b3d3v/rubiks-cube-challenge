@@ -85,7 +85,6 @@ class RubiksCubeApp {
       controlPanel: "none",
       background: "none",
       visualization: "3D",
-      timestamp: 0,
     });
 
     // Wait for the player to be ready with more comprehensive checks
@@ -159,7 +158,7 @@ class RubiksCubeApp {
       // Strategy: Replace the player with a new one that has the scramble applied
       const container = document.getElementById("cube-container");
 
-      // Create a new player with the scramble and timestamp at the end
+      // Create a new player with the scramble
       const newPlayer = new TwistyPlayer({
         puzzle: "megaminx",
         alg: scramble,
@@ -167,7 +166,6 @@ class RubiksCubeApp {
         controlPanel: "none",
         background: "none",
         visualization: "3D",
-        timestamp: Number.MAX_SAFE_INTEGER, // Start at the end (scrambled state)
       });
 
       // Replace the old player
@@ -179,14 +177,39 @@ class RubiksCubeApp {
 
       this.updateStatus();
 
-      // Wait a moment for the new player to initialize
-      setTimeout(() => {
+      // Wait for the new player to initialize, then jump to scrambled state
+      setTimeout(async () => {
+        try {
+          // Method 1: Try via controller's timeline
+          if (newPlayer.controller?.timeline) {
+            await newPlayer.controller.timeline.jumpToEnd();
+            console.log("🎲 Applied scramble via controller timeline");
+          }
+          // Method 2: Try via experimentalModel
+          else if (newPlayer.experimentalModel?.timeline) {
+            await newPlayer.experimentalModel.timeline.jumpToEnd();
+            console.log("🎲 Applied scramble via experimental timeline");
+          }
+          // Method 3: Try direct timeline access
+          else if (newPlayer.timeline) {
+            await newPlayer.timeline.jumpToEnd();
+            console.log("🎲 Applied scramble via direct timeline");
+          } else {
+            console.log(
+              "🎲 No timeline control available - scramble algorithm set but visual state may not change"
+            );
+          }
+        } catch (e) {
+          console.log("Timeline control failed:", e.message);
+          console.log(
+            "🎲 Scramble algorithm is set, but visual state might not reflect scrambled position"
+          );
+        }
+
         this.isAnimating = false;
         this.updateButtonStates(false);
-        console.log(
-          "🎲 Scramble operation completed - dodecahedron should now be scrambled"
-        );
-      }, 1000);
+        console.log("🎲 Scramble operation completed");
+      }, 2000);
     } catch (error) {
       console.error("Error scrambling cube:", error);
       this.showError("Failed to scramble cube");
@@ -217,7 +240,6 @@ class RubiksCubeApp {
         controlPanel: "none",
         background: "none",
         visualization: "3D",
-        timestamp: 0, // Start at beginning (solved state)
       });
 
       // Replace the old player
@@ -336,6 +358,27 @@ class RubiksCubeApp {
 
 // Initialize the app when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
+  const htmlEl = document.documentElement;
+  // Set dark theme as default
+  htmlEl.setAttribute(
+    "data-theme",
+    htmlEl.getAttribute("data-theme") || "dark"
+  );
+
+  const themeToggleBtn = document.getElementById("themeToggle");
+  if (themeToggleBtn) {
+    // Set initial icon according theme
+    themeToggleBtn.textContent =
+      htmlEl.getAttribute("data-theme") === "dark" ? "🌙" : "⭐";
+    themeToggleBtn.addEventListener("click", () => {
+      const current = htmlEl.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      htmlEl.setAttribute("data-theme", next);
+      // Update icon
+      themeToggleBtn.textContent = next === "dark" ? "🌙" : "⭐";
+    });
+  }
+
   new RubiksCubeApp();
 });
 

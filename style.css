@@ -1,3 +1,40 @@
+:root {
+  --green: #96e150;
+  --purple: #7864fa;
+  --blue: #1e96ff;
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Enhanced dark background & glow */
+  --bg-linear-start: #0a0a0a; /* near-black */
+  --bg-linear-end: #141827; /* deep navy */
+  --glow-1: rgba(120, 100, 250, 0.35); /* increased */
+  --glow-2: rgba(30, 150, 255, 0.3); /* increased */
+  --glow-3: rgba(150, 225, 80, 0.22); /* green glow */
+  --text-color: var(--white);
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --card-border: rgba(255, 255, 255, 0.15);
+  --button-primary-start: var(--purple);
+  --button-primary-end: var(--blue);
+  --button-primary-shadow: rgba(120, 100, 250, 0.4);
+  --button-secondary-start: var(--green);
+  --button-secondary-end: #7ac640;
+  --button-secondary-shadow: rgba(150, 225, 80, 0.4);
+  --info-text-color: var(--green);
+  --highlight-text-color: var(--purple);
+}
+
+[data-theme="light"] {
+  --bg-linear-start: #f4f6ff; /* soft white-blue */
+  --bg-linear-end: #e9fdea; /* soft green tint */
+  --glow-1: rgba(120, 100, 250, 0.18);
+  --glow-2: rgba(30, 150, 255, 0.18);
+  --glow-3: rgba(150, 225, 80, 0.15);
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --text-color: var(--black);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,10 +42,21 @@
 }
 
 body {
-  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  color: white;
+  font-family: "Barlow", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  background: radial-gradient(
+      circle at 20% 30%,
+      var(--glow-1) 0%,
+      transparent 45%
+    ),
+    radial-gradient(circle at 80% 70%, var(--glow-2) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, var(--glow-3) 0%, transparent 70%),
+    linear-gradient(
+      135deg,
+      var(--bg-linear-start) 0%,
+      var(--bg-linear-end) 100%
+    );
+  color: var(--text-color);
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -23,9 +71,10 @@ body {
   grid-template-areas:
     "header header"
     "controls cube"
-    "status cube";
+    "status cube"
+    "footer footer";
   grid-template-columns: 350px 1fr;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto auto 1fr auto;
   gap: 20px;
   height: calc(100vh - 40px);
 }
@@ -43,7 +92,7 @@ header {
 h1 {
   font-size: 2.5rem;
   font-weight: 800;
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+  background: linear-gradient(45deg, var(--green), var(--purple), var(--blue));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -102,23 +151,31 @@ h1 {
 }
 
 .btn.primary {
-  background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-  color: white;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  background: linear-gradient(
+    45deg,
+    var(--button-primary-start),
+    var(--button-primary-end)
+  );
+  color: var(--white);
+  box-shadow: 0 4px 15px var(--button-primary-shadow);
 }
 
 .btn.primary:hover {
-  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+  box-shadow: 0 8px 25px var(--button-primary-shadow);
 }
 
 .btn.secondary {
-  background: linear-gradient(45deg, #4ecdc4, #44a08d);
-  color: white;
-  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+  background: linear-gradient(
+    45deg,
+    var(--button-secondary-start),
+    var(--button-secondary-end)
+  );
+  color: var(--white);
+  box-shadow: 0 4px 15px var(--button-secondary-shadow);
 }
 
 .btn.secondary:hover {
-  box-shadow: 0 8px 25px rgba(78, 205, 196, 0.6);
+  box-shadow: 0 8px 25px var(--button-secondary-shadow);
 }
 
 .btn.tertiary {
@@ -141,7 +198,7 @@ h1 {
 
 .info p {
   margin-bottom: 10px;
-  color: #4ecdc4;
+  color: var(--info-text-color);
 }
 
 .info ul {
@@ -195,12 +252,12 @@ twisty-player {
 }
 
 #moveCounter {
-  color: #4ecdc4;
+  color: var(--info-text-color);
   font-weight: 600;
 }
 
 #currentAlg {
-  color: #ff6b6b;
+  color: var(--highlight-text-color);
   font-weight: 600;
   word-break: break-all;
 }
@@ -212,9 +269,10 @@ twisty-player {
       "header"
       "cube"
       "controls"
-      "status";
+      "status"
+      "footer";
     grid-template-columns: 1fr;
-    grid-template-rows: auto 400px auto auto;
+    grid-template-rows: auto 400px auto auto auto;
   }
 
   .control-group:first-child {
@@ -270,14 +328,14 @@ twisty-player {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #4ecdc4;
+  color: var(--info-text-color);
 }
 
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(78, 205, 196, 0.3);
-  border-top: 3px solid #4ecdc4;
+  border: 3px solid rgba(30, 150, 255, 0.3);
+  border-top: 3px solid var(--blue);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 15px;
@@ -290,4 +348,58 @@ twisty-player {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Themed card backgrounds */
+header,
+footer,
+#controls,
+.info,
+#cube-container,
+#status,
+#status p {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+.btn.tertiary {
+  background: var(--card-bg);
+  color: var(--text-color);
+  box-shadow: 0 4px 15px var(--card-border);
+}
+
+.btn.tertiary:hover {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 25px var(--card-border);
+}
+
+/* Footer */
+footer {
+  grid-area: footer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.theme-toggle:hover {
+  transform: scale(1.1);
 }

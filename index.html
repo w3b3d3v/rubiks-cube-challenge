@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>12x12 Dodecahedron - Twizzle Edition</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="app">
       <header>
         <h1>🌟 12x12 Dodecahedron Simulator</h1>
-        <p class="subtitle">Powered by Twizzle - The Ultimate Puzzle Library</p>
       </header>
 
       <div id="controls">
@@ -51,6 +54,10 @@
         <p id="moveCounter">Moves: 0</p>
         <p id="currentAlg">Current Algorithm: None</p>
       </div>
+
+      <footer>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+      </footer>
     </div>
 
     <script type="module" src="app.js"></script>
