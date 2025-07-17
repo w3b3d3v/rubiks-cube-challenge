@@ -33,29 +33,16 @@
           <p><strong>Controls:</strong></p>
           <ul>
             <li>🖱️ Click & drag to rotate view</li>
-            <li>
-              🎲 <strong>Scramble:</strong> Generate random dodecahedron state
-            </li>
+            <li>🎲 <strong>Scramble:</strong> Generate random puzzle state</li>
             <li>✨ <strong>Solve:</strong> Return to solved state</li>
           </ul>
-          <p>
-            <strong>Note:</strong> 12-faced dodecahedron with pentagonal faces
+          <p id="infoNote">
+            <strong>Note:</strong> 3x3 Rubik's Cube selected by default
           </p>
         </div>
       </div>
 
-      <div id="cube-container">
-        <twisty-player
-          id="cubePlayer"
-          puzzle="12x12x12"
-          alg=""
-          hint-facelets="none"
-          control-panel="none"
-          background="none"
-          visualization="3D"
-        >
-        </twisty-player>
-      </div>
+      <div id="cube-container"></div>
 
       <div id="status">
         <p id="moveCounter">Moves: 0</p>

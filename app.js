@@ -166,6 +166,16 @@ class RubiksCubeApp {
       switchBtn.textContent =
         this.puzzleType === "3x3x3" ? "Switch to 12x12" : "Switch to 3x3";
     }
+
+    // Update info note
+    const infoNote = document.getElementById("infoNote");
+    if (infoNote) {
+      infoNote.innerHTML = `<strong>Note:</strong> ${
+        this.puzzleType === "3x3x3"
+          ? "3x3 Rubik's Cube selected"
+          : "12-faced dodecahedron (megaminx) selected"
+      }`;
+    }
   }
 
   setupEventListeners() {
