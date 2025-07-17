@@ -1,0 +1,38 @@
+name: Deploy static site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Allow manual trigger
+  workflow_dispatch:
+
+permissions:
+  contents: read # to fetch code
+  pages: write # to deploy to gh-pages
+  id-token: write # to verify deployment
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      # No build step needed – we are shipping raw HTML/CSS/JS
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          # Everything except .git, node_modules, etc. will be packaged automatically
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
