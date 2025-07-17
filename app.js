@@ -7,65 +7,53 @@ class RubiksCubeApp {
     this.currentAlgorithm = "";
     this.isAnimating = false;
 
-    // Define available moves for 7x7x7 cube
+    // Define available moves for megaminx (dodecahedron - 12 faces)
     this.scrambleMoves = [
+      // Primary face turns
       "R",
       "R'",
-      "R2",
-      "L",
-      "L'",
-      "L2",
+      "R2", // Right
       "U",
       "U'",
-      "U2",
-      "D",
-      "D'",
-      "D2",
+      "U2", // Up
       "F",
       "F'",
-      "F2",
+      "F2", // Front
+      "L",
+      "L'",
+      "L2", // Left
+      "BL",
+      "BL'",
+      "BL2", // Back Left
+      "BR",
+      "BR'",
+      "BR2", // Back Right
+      "DR",
+      "DR'",
+      "DR2", // Down Right
+      "D",
+      "D'",
+      "D2", // Down
+      "DL",
+      "DL'",
+      "DL2", // Down Left
       "B",
       "B'",
-      "B2",
-      // Wide moves for 7x7
-      "Rw",
-      "Rw'",
-      "Rw2",
-      "Lw",
-      "Lw'",
-      "Lw2",
-      "Uw",
-      "Uw'",
-      "Uw2",
-      "Dw",
-      "Dw'",
-      "Dw2",
-      "Fw",
-      "Fw'",
-      "Fw2",
-      "Bw",
-      "Bw'",
-      "Bw2",
-      // 3-layer moves
-      "3Rw",
-      "3Rw'",
-      "3Rw2",
-      "3Lw",
-      "3Lw'",
-      "3Lw2",
-      "3Uw",
-      "3Uw'",
-      "3Uw2",
-      "3Dw",
-      "3Dw'",
-      "3Dw2",
+      "B2", // Back
+      // Puzzle rotations for variety
+      "y",
+      "y'",
+      "y2", // Y-axis rotation
+      "z",
+      "z'",
+      "z2", // Z-axis rotation
     ];
 
     this.init();
   }
 
   async init() {
-    console.log("🎲 Initializing 12x12 Rubik's Cube with Twizzle...");
+    console.log("🎲 Initializing 12x12 Dodecahedron with Twizzle...");
 
     try {
       await this.initializeCube();
@@ -85,24 +73,40 @@ class RubiksCubeApp {
     container.innerHTML = `
             <div class="loading">
                 <div class="spinner"></div>
-                <p>Loading 7x7x7 Cube...</p>
+                <p>Loading 12x12 Dodecahedron...</p>
             </div>
         `;
 
-    // Create the Twisty player - using 7x7x7 (max supported by Twizzle)
+    // Create the Twisty player - using megaminx (dodecahedron-based)
     this.player = new TwistyPlayer({
-      puzzle: "7x7x7",
+      puzzle: "megaminx",
       alg: "",
       hintFacelets: "none",
       controlPanel: "none",
       background: "none",
       visualization: "3D",
+      timestamp: 0,
     });
 
-    // Wait for the player to be ready
+    // Wait for the player to be ready with more comprehensive checks
     await new Promise((resolve) => {
+      let attempts = 0;
+      const maxAttempts = 50; // 5 seconds max
+
       const checkReady = () => {
-        if (this.player.experimentalModel?.currentPattern) {
+        attempts++;
+
+        // Check multiple indicators that the player is ready
+        const hasModel = this.player.experimentalModel;
+        const hasPattern = hasModel?.currentPattern;
+        const hasKPuzzle = hasModel?.kpuzzle;
+        const hasTimeline = this.player.timeline || hasModel?.timeline;
+
+        if ((hasPattern || hasKPuzzle) && hasTimeline) {
+          console.log("✅ Twizzle player fully initialized");
+          resolve();
+        } else if (attempts >= maxAttempts) {
+          console.log("⚠️ Twizzle player timeout, proceeding anyway");
           resolve();
         } else {
           setTimeout(checkReady, 100);
@@ -144,21 +148,44 @@ class RubiksCubeApp {
       this.isAnimating = true;
       this.updateButtonStates(true);
 
-      // Generate a proper 7x7 scramble (80 moves for big cubes)
-      const scramble = this.generateRandomScramble(80);
+      // Generate a proper megaminx scramble (70 moves for dodecahedron)
+      const scramble = this.generateRandomScramble(70);
 
-      this.player.alg = scramble;
       this.currentAlgorithm = scramble;
       this.moveCount = this.countMoves(this.currentAlgorithm);
 
+      console.log(`🎲 Applying scramble: ${scramble.substring(0, 50)}...`);
+
+      // Strategy: Replace the player with a new one that has the scramble applied
+      const container = document.getElementById("cube-container");
+
+      // Create a new player with the scramble and timestamp at the end
+      const newPlayer = new TwistyPlayer({
+        puzzle: "megaminx",
+        alg: scramble,
+        hintFacelets: "none",
+        controlPanel: "none",
+        background: "none",
+        visualization: "3D",
+        timestamp: Number.MAX_SAFE_INTEGER, // Start at the end (scrambled state)
+      });
+
+      // Replace the old player
+      container.innerHTML = "";
+      container.appendChild(newPlayer);
+
+      // Update the reference
+      this.player = newPlayer;
+
       this.updateStatus();
 
-      // Auto-play the scramble
-      await this.player.experimentalModel.jumpToEnd();
-
+      // Wait a moment for the new player to initialize
       setTimeout(() => {
         this.isAnimating = false;
         this.updateButtonStates(false);
+        console.log(
+          "🎲 Scramble operation completed - dodecahedron should now be scrambled"
+        );
       }, 1000);
     } catch (error) {
       console.error("Error scrambling cube:", error);
@@ -175,9 +202,30 @@ class RubiksCubeApp {
       this.isAnimating = true;
       this.updateButtonStates(true);
 
-      this.player.alg = "";
       this.currentAlgorithm = "";
       this.moveCount = 0;
+
+      console.log("🎲 Solving dodecahedron...");
+
+      // Create a new player in solved state
+      const container = document.getElementById("cube-container");
+
+      const newPlayer = new TwistyPlayer({
+        puzzle: "megaminx",
+        alg: "",
+        hintFacelets: "none",
+        controlPanel: "none",
+        background: "none",
+        visualization: "3D",
+        timestamp: 0, // Start at beginning (solved state)
+      });
+
+      // Replace the old player
+      container.innerHTML = "";
+      container.appendChild(newPlayer);
+
+      // Update the reference
+      this.player = newPlayer;
 
       this.updateStatus();
 
@@ -196,11 +244,10 @@ class RubiksCubeApp {
   generateRandomScramble(numMoves) {
     const moves = [];
     let lastMove = "";
-    let lastAxis = "";
 
     for (let i = 0; i < numMoves; i++) {
       let move;
-      let axis;
+      let faceId;
       let attempts = 0;
 
       do {
@@ -208,25 +255,20 @@ class RubiksCubeApp {
           this.scrambleMoves[
             Math.floor(Math.random() * this.scrambleMoves.length)
           ];
-        axis = move.charAt(0); // R, L, U, D, F, B
+        // For dodecahedron, face identification is more complex
+        faceId = move.replace(/['2]/g, ""); // Remove ', 2 to get face name
         attempts++;
 
-        // Prevent consecutive moves on same face or opposing faces
+        // Prevent consecutive moves on same face or rotations
         if (attempts > 10) break; // Safety valve
       } while (
         move === lastMove ||
-        axis === lastAxis ||
-        (axis === "R" && lastAxis === "L") ||
-        (axis === "L" && lastAxis === "R") ||
-        (axis === "U" && lastAxis === "D") ||
-        (axis === "D" && lastAxis === "U") ||
-        (axis === "F" && lastAxis === "B") ||
-        (axis === "B" && lastAxis === "F")
+        faceId === lastMove.replace(/['2]/g, "") ||
+        ((faceId === "y" || faceId === "z") && lastMove.startsWith(faceId))
       );
 
       moves.push(move);
       lastMove = move;
-      lastAxis = axis;
     }
 
     return moves.join(" ");
