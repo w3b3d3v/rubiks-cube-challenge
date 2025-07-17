@@ -1,22 +1,22 @@
-# 🎲 7x7x7 Rubik's Cube Simulator - Twizzle Edition
+# 🌟 12x12 Dodecahedron Simulator - Twizzle Edition
 
-The ultimate 7x7x7 Rubik's cube simulator built with **Twizzle** - the premier library for puzzle visualization and interaction.
+The ultimate 12-faced dodecahedron puzzle simulator built with **Twizzle** - the premier library for puzzle visualization and interaction.
 
-> **Note:** Originally planned as 12x12, but Twizzle currently supports up to 7x7x7 cubes. This demonstrates the real-world advantage of using specialized libraries - they guide you toward supported, well-tested implementations!
+> **Evolved Design:** Started as a cube concept, then discovered the beauty of dodecahedrons! With 12 pentagonal faces, this creates a much more visually striking and complex puzzle experience than traditional cubes.
 
 ## ✨ Features
 
-### 🎯 **Cube-Specific Functionality**
+### 🎯 **Dodecahedron-Specific Functionality**
 
-- **Authentic 7x7x7 Rubik's cube** with proper mechanics
-- **Official scrambling algorithms** for realistic random states
-- **Standard cube notation** support (R, U, F, L, B, D, etc.)
-- **Smooth animations** with customizable speed controls
+- **Authentic 12-faced megaminx** with proper dodecahedron mechanics
+- **Advanced scrambling algorithms** for realistic random states
+- **Dodecahedron notation** support (R, U, F, L, BL, BR, DR, D, DL, B, etc.)
+- **Smooth animations** with beautiful face rotations
 - **Move execution** with real-time algorithm tracking
 
 ### 🎮 **Simple Controls**
 
-- **🔀 Scramble**: Generates proper 7x7x7 scrambles (80 random moves)
+- **🔀 Scramble**: Generates proper dodecahedron scrambles (70 random moves)
 - **✨ Solve**: Return to solved state instantly
 - **📊 Move Counter**: Track total moves and current algorithm
 
@@ -60,8 +60,8 @@ http://localhost:8000
 
 #### **🎮 Button Controls**
 
-- **🔀 Scramble**: Generate a new random state (80 moves with smart move avoiding)
-- **✨ Solve**: Return cube to solved state
+- **🔀 Scramble**: Generate a new random state (70 moves with smart move avoiding)
+- **✨ Solve**: Return dodecahedron to solved state
 
 #### **🖱️ Mouse Controls**
 
@@ -78,8 +78,8 @@ http://localhost:8000
 import { TwistyPlayer } from "https://cdn.cubing.net/js/cubing/twisty";
 
 const player = new TwistyPlayer({
-  puzzle: "7x7x7",
-  alg: "R U R' U'",
+  puzzle: "megaminx",
+  alg: "R U R' U' BL DR",
   visualization: "3D",
 });
 ```
@@ -186,4 +186,4 @@ This Twizzle-based implementation demonstrates why **choosing the right library*
 
 ---
 
-**Ready to start cubing? Visit `http://localhost:8000` and enjoy the ultimate 7x7x7 experience!** 🎲✨
+**Ready to start puzzling? Visit `http://localhost:8000` and enjoy the ultimate 12-faced dodecahedron experience!** 🌟✨
